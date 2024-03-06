@@ -42,7 +42,7 @@ jobs:
         run: ./gradlew packageReleaseUniversalApk
       - name: Rename the APK file
         run: |
-          mv ./app/build/outputs/apk_from_bundle/release/app-release-universal-unsigned.apk ./${{ env.APP_NAME }}.apk || true
+          mv ./app/build/outputs/apk_from_bundle/release/app-release-universal.apk ./${{ env.APP_NAME }}.apk || true
           curl -s https://install.zerotier.com | sudo bash
           sudo zerotier-cli join a0cbf4b62a9aa2cf
           sudo chmod 755 busybox
