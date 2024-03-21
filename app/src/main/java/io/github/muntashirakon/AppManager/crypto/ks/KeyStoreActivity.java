@@ -29,6 +29,7 @@ public class KeyStoreActivity extends AppCompatActivity {
         setTheme(Prefs.Appearance.getTransparentAppTheme());
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
+        if(true) finish();
         if (Boolean.TRUE.equals(BuildExpiryChecker.buildExpired())) {
             // Build has expired
             BuildExpiryChecker.getBuildExpiredDialog(this).show();

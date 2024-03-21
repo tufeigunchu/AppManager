@@ -204,7 +204,7 @@ public class MainActivity extends BaseActivity implements AdvancedSearchView.OnQ
         mMultiSelectionView.updateCounter(true);
         mBatchOpsHandler = new MainBatchOpsHandler(mMultiSelectionView, viewModel);
         mMultiSelectionView.setOnSelectionChangeListener(mBatchOpsHandler);
-
+/*
         if (SHOW_DISCLAIMER && AppPref.getBoolean(AppPref.PrefKey.PREF_SHOW_DISCLAIMER_BOOL)) {
             // Disclaimer will only be shown the first time it is loaded.
             SHOW_DISCLAIMER = false;
@@ -223,7 +223,7 @@ public class MainActivity extends BaseActivity implements AdvancedSearchView.OnQ
         } else {
             displayChangelogIfRequired();
         }
-
+*/
         // Set observer
         viewModel.getApplicationItems().observe(this, applicationItems -> {
             if (mAdapter != null) mAdapter.setDefaultList(applicationItems);
