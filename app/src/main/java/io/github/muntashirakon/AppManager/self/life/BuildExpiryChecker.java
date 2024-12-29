@@ -91,7 +91,7 @@ public final class BuildExpiryChecker {
             return null;
         }
         // Build has completely expired and should stop working
-        return true;
+        return false;
     }
 
     private static long getCurrentTime() {
