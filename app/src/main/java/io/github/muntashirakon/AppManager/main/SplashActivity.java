@@ -57,9 +57,9 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected final void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(Prefs.Appearance.isPureBlackTheme() ? R.style.AppTheme_Splash_Black : R.style.AppTheme_Splash);
+        SplashScreen.installSplashScreen(this);
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
-        SplashScreen.installSplashScreen(this);
         DynamicColors.applyToActivityIfAvailable(this);
         setContentView(R.layout.activity_authentication);
         ((TextView) findViewById(R.id.version)).setText(String.format(Locale.ROOT, "%s (%d)",
@@ -73,10 +73,24 @@ public class SplashActivity extends AppCompatActivity {
         }
         if (Boolean.TRUE.equals(BuildExpiryChecker.buildExpired())) {
             // Build has expired
-            BuildExpiryChecker.getBuildExpiredDialog(this).show();
+            BuildExpiryChecker.getBuildExpiredDialog(this, (dialog, which) -> doAuthenticate()).show();
             return;
         }
         // Run authentication
+        doAuthenticate();
+    }
+
+    @CallSuper
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (menu instanceof MenuBuilder) {
+            ((MenuBuilder) menu).setOptionalIconsVisible(true);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void doAuthenticate() {
         mViewModel = new ViewModelProvider(this).get(SecurityAndOpsViewModel.class);
         mBiometricPrompt = new BiometricPrompt(this, ContextCompat.getMainExecutor(this),
                 new BiometricPrompt.AuthenticationCallback() {
@@ -135,31 +149,17 @@ public class SplashActivity extends AppCompatActivity {
         });
         if (!mViewModel.isAuthenticating()) {
             mViewModel.setAuthenticating(true);
-            authenticate();
+            // Check KeyStore
+            if (KeyStoreManager.hasKeyStorePassword()) {
+                // We already have a working keystore password.
+                // Only need authentication and/or verify mode of operation.
+                ensureSecurityAndModeOfOp();
+                return;
+            }
+            Intent keyStoreIntent = new Intent(this, KeyStoreActivity.class)
+                    .putExtra(KeyStoreActivity.EXTRA_KS, true);
+            mKeyStoreActivity.launch(keyStoreIntent);
         }
-    }
-
-    @CallSuper
-    @SuppressLint("RestrictedApi")
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (menu instanceof MenuBuilder) {
-            ((MenuBuilder) menu).setOptionalIconsVisible(true);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    private void authenticate() {
-        // Check KeyStore
-        if (KeyStoreManager.hasKeyStorePassword()) {
-            // We already have a working keystore password.
-            // Only need authentication and/or verify mode of operation.
-            ensureSecurityAndModeOfOp();
-            return;
-        }
-        Intent keyStoreIntent = new Intent(this, KeyStoreActivity.class)
-                .putExtra(KeyStoreActivity.EXTRA_KS, true);
-        mKeyStoreActivity.launch(keyStoreIntent);
     }
 
     private void ensureSecurityAndModeOfOp() {

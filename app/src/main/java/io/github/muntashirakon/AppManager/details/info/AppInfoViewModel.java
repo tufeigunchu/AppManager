@@ -255,7 +255,7 @@ public class AppInfoViewModel extends AndroidViewModel {
                 tagCloud.isBatteryOptimized = true;
             }
             if (!isExternalApk && SelfPermissions.checkSelfOrRemotePermission(ManifestCompat.permission.MANAGE_NETWORK_POLICY)) {
-                tagCloud.netPolicies = ExUtils.requireNonNullElse(() -> NetworkPolicyManagerCompat.getUidPolicy(applicationInfo.uid), 0);
+                tagCloud.netPolicies = NetworkPolicyManagerCompat.getUidPolicy(applicationInfo.uid);
             } else {
                 tagCloud.netPolicies = 0;
             }
@@ -358,8 +358,8 @@ public class AppInfoViewModel extends AndroidViewModel {
                 if (hasUsageAccess) {
                     // Net statistics
                     AppUsageStatsManager.DataUsage dataUsage;
-                    dataUsage = AppUsageStatsManager.getDataUsageForPackage(getApplication(),
-                            applicationInfo.uid, UsageUtils.USAGE_LAST_BOOT);
+                    dataUsage = AppUsageStatsManager.getDataUsageForPackage(applicationInfo.uid,
+                            UsageUtils.USAGE_LAST_BOOT);
                     if (dataUsage.getTotal() == 0 && !ArrayUtils.contains(
                             packageInfo.requestedPermissions, Manifest.permission.INTERNET)) {
                         appInfo.dataUsage = null;

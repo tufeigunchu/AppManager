@@ -8,13 +8,14 @@ plugins {
 android {
     namespace 'io.github.muntashirakon.AppManager'
     compileSdk compile_sdk
+    buildToolsVersion = build_tools
 
     defaultConfig {
         applicationId 'pqy.AppManager'
         minSdk min_sdk
         targetSdk target_sdk
-        versionCode 436
-        versionName "4.0.0-beta01"
+        versionCode 437
+        versionName "4.0.0-beta02"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += [
@@ -77,7 +78,7 @@ android {
             universalApk true
         }
     }
-    androidResources {
+    aaptOptions {
         noCompress 'jar', 'sh'
     }
     testOptions {
